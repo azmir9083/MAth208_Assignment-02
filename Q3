@@ -1,0 +1,61 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+def perform_linear_regression(x_values, y_values):
+    X = x_values.reshape(-1, 1)
+    Y = y_values.reshape(-1, 1)
+    A = np.hstack([X, np.ones_like(X)])
+    b, a = np.linalg.lstsq(A, Y, rcond=None)[0]
+    correlation_coefficient = np.corrcoef(x_values, y_values)[0, 1]
+    return b[0], a[0], correlation_coefficient
+
+def plot_data_and_linear_fit(x_values, y_values, slope, intercept, correlation):
+    plt.figure(figsize=(10, 6))
+    plt.scatter(x_values, y_values, color='red', label='Data points')
+    plt.plot(x_values, intercept + slope * x_values, label=f'Linear Fit; y = {intercept:.2f} + {slope:.2f}x, r = {correlation:.2f}')
+    plt.title('Data points and Linear Fit')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.legend()
+    plt.show()
+
+def perform_polynomial_fit(x_values, y_values, degree):
+    coefficients = np.polyfit(x_values, y_values, degree)
+    polynomial_function = np.poly1d(coefficients)
+    return polynomial_function
+
+def plot_polynomial_fit(x_values, polynomial_function):
+    new_x = np.linspace(x_values.min(), x_values.max(), 100)
+    new_y = polynomial_function(new_x)
+
+    plt.figure(figsize=(10, 6))
+    plt.scatter(x_values, df['Y'], color='red', label='Data points')
+    plt.plot(new_x, new_y, label='Polynomial Fit', color='green')
+    plt.title('Data points and Polynomial Fit')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.legend()
+    plt.show()
+
+# Data
+data = {'X': [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        'Y': [30, 25, 95, 115, 265, 325, 570, 700, 1085, 1300]}
+df = pd.DataFrame(data)
+
+# Linear regression
+slope, intercept, correlation = perform_linear_regression(df['X'].values, df['Y'].values)
+
+print(f"Slope (b1): {slope}")
+print(f"Intercept (b0): {intercept}")
+print(f"Coefficient of linear correlation (r): {correlation}")
+
+# Plotting the data and linear fit
+plot_data_and_linear_fit(df['X'], df['Y'], slope, intercept, correlation)
+
+# Polynomial fit
+degree = 2
+poly_function = perform_polynomial_fit(df['X'], df['Y'], degree)
+
+# Plotting the data and polynomial fit
+plot_polynomial_fit(df['X'], poly_function)
