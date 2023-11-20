@@ -1,0 +1,35 @@
+import numpy as np
+
+def generate_custom_distribution_numbers(n, mu, sigma):
+    return np.random.normal(mu, sigma, n)
+
+def generate_custom_uniform_numbers(n, low, high):
+    return np.random.uniform(low, high, n)
+
+def check_chebyshev_inequality(data, mu, sigma, k):
+    lower_bound = mu - k * sigma
+    upper_bound = mu + k * sigma
+    count = sum(lower_bound <= x <= upper_bound for x in data)
+    probability = count / len(data)
+    chebyshev_bound = 1 - 1/(k**2)
+
+    print(f"Probability of |X-u| = {probability} ; 1-1/(k^2) = {chebyshev_bound}")
+    print(f"When k = {k}, P(|X-u|<k*sd)>={1-1/k**2} is {'True' if probability >= chebyshev_bound else 'False'}")
+    return count
+
+def main():
+    mu, sigma = 10, 0.5
+    data_normal = generate_custom_distribution_numbers(50, mu, sigma)
+    data_uniform = generate_custom_uniform_numbers(50, -20, 20)
+
+    for k_value in [1, 2**0.5, 1.5, 2, 3]:
+        print("\nCustom Distribution:")
+        count_normal = check_chebyshev_inequality(data_normal, mu, sigma, k_value)
+
+        print("\nCustom Uniform Distribution:")
+        uniform_sigma = np.sqrt((20 - (-20))**2 / 12)
+        uniform_mu = 0
+        count_uniform = check_chebyshev_inequality(data_uniform, uniform_mu, uniform_sigma, k_value)
+
+if __name__ == "__main__":
+    main()
