@@ -1,0 +1,55 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+def load_data(file_path):
+    df = pd.read_excel(file_path, engine='openpyxl')
+    return df
+
+
+def handle_missing_values(data):
+    return data.dropna()
+
+
+def calculate_summary(data, label):
+    mean = data.mean()
+    variance = data.var()
+    std_dev = data.std()
+    median = data.median()
+    q1, q3 = data.quantile([0.25, 0.75])
+
+    print("{}: mean = {:.2f}, variance = {:.2f}, std_dev = {:.2f}, median = {:.2f}, Q1 = {:.2f}, Q3 = {:.2f}".format(
+        label, mean, variance, std_dev, median, q1, q3))
+
+    return mean, variance, std_dev, median, q1, q3
+
+
+def visualize_boxplot(data, label):
+    fig, ax = plt.subplots()
+    ax.boxplot(data, labels=[label])
+    ax.set_title(label)
+    plt.show()
+
+
+def main():
+    # Specify the path to your file
+    file_path = 'original_diabetes.xlsx'
+
+    # Load data
+    df = load_data(file_path)
+
+    # Handle missing values
+    glucose = handle_missing_values(df['Glucose'])
+    blood_pressure = handle_missing_values(df['BloodPressure'])
+
+    # Calculate and display summary statistics
+    glucose_stats = calculate_summary(glucose, 'Glucose')
+    blood_pressure_stats = calculate_summary(blood_pressure, 'Blood Pressure')
+
+    # Visualize boxplots
+    visualize_boxplot(glucose, 'Glucose')
+    visualize_boxplot(blood_pressure, 'Blood Pressure')
+
+
+if __name__ == "__main__":
+    main()
